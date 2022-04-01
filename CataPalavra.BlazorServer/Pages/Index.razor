@@ -1,0 +1,62 @@
+﻿@page "/"
+
+<PageTitle>Index</PageTitle>
+
+@using CataPalavra.BlazorServer.Data
+@inject CataPalavraService CataPalavraService
+
+<EditForm Model="_filter" OnSubmit="GetPalavra">
+    <div class="mb-3">
+        <label for="mascara" class="form-label">Máscara</label>        
+        <InputText @bind-Value="_filter.Mascara" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label for="letrasIgnoradas" class="form-label">Letras Ignoradas</label>
+        <InputText @bind-Value="_filter.LetrasIgnoradas" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label for="letrasObrigatorias" class="form-label">Letras Obrigatórias</label>
+        <InputText @bind-Value="_filter.LetrasObrigatorias" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary">Buscar</button>
+</EditForm>
+
+@if (lists != null)
+{
+    <div class="py-5"> 
+        <div class="container">
+            <table class="table text-white">
+                <tbody>
+                    @foreach (var list in lists)
+                    {
+                        <tr>
+                            @foreach (var word in list)
+                            {
+                                <td>
+                                    @word 
+                                </td>
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>    
+}
+
+@code {
+    private Filter _filter = new Filter();
+    private List<List<string>>? lists;
+
+    private void GetPalavra()
+    {
+        lists = CataPalavraService.Buscar(_filter.Mascara, _filter.LetrasIgnoradas, _filter.LetrasObrigatorias);        
+    } 
+
+    private class Filter
+    {
+        public string Mascara { get; set; } = string.Empty;
+        public string LetrasIgnoradas { get; set; } = string.Empty;       
+        public string LetrasObrigatorias { get; set; } = string.Empty;
+    }
+}
